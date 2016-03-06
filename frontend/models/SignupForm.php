@@ -72,14 +72,14 @@ class SignupForm extends Model
         $user->setPassword($this->password);
         $user->role = $this->role;
         $user->registration_date = date('Y-m-d h:m:s');
-        $admin_active_users = User::FindOne(['role' => "Administrador" , 'status' => 10]);
+        $admin_active_users = User::FindOne(['role' => "Administrador" , 'status' => 'Activo']);
         if ($admin_active_users == NULL && $this->role == "Administrador"){
           $user->status = "Activo";
         }
         else{
           $user->status = "Inactivo";
         }
-        
+
         return ($user->save() && $person->save()) ? $user : null;
     }
 }

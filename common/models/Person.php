@@ -43,9 +43,9 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'phone_number' => 'Phone Number',
-            'fk_user' => 'Fk User',
+            'name' => 'Nombre',
+            'phone_number' => 'Número telefónico',
+            'fk_user' => 'Correo electrónico',
         ];
     }
 

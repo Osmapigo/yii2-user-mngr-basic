@@ -50,13 +50,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'email' => 'Email',
-            'password_hash' => 'Password Hash',
+            'email' => 'Correo electrónico',
+            'password_hash' => 'Contraseña',
             'activation_code' => 'Activation Code',
             'forgot_password_code' => 'Forgot Password Code',
-            'registration_date' => 'Registration Date',
-            'role' => 'Role',
-            'status' => 'Status',
+            'registration_date' => 'Fecha de registro',
+            'role' => 'Rol',
+            'status' => 'Estado',
         ];
     }
 
