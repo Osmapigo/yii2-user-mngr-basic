@@ -46,7 +46,7 @@ AppAsset::register($this);
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
-                'Cerrar sesión (' . Yii::$app->user->identity->username . ')',
+                'Cerrar sesión (' . Yii::$app->user->identity->email . ')',
                 ['class' => 'btn btn-link']
             )
             . Html::endForm()
