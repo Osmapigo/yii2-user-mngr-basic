@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-
+use common\models\User;
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\PersonSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,7 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Crear usuario', ['create'], ['class' => 'btn btn-success']) ?>
+        <? if (Yii::$app->user->Identity->role == "Administrador"){
+          echo Html::a('Crear usuario', ['create'], ['class' => 'btn btn-success']);
+        } ?>
     </p>
 
     <?= GridView::widget([
@@ -31,7 +33,31 @@ $this->params['breadcrumbs'][] = $this->title;
             'fkUser.status',
             'fkUser.registration_date',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+              'template' => '{view} {update} {activate} {deactivate}{delete}',
+              'buttons' => [
+                'update' => function ($url){
+                  if (Yii::$app->user->Identity->role == "Administrador"){
+                      return Html::a('<span class = "glyphicon glyphicon-pencil" aria-hidden = "true"></span>', $url);
+                  }
+                },
+                'delete' => function ($url, $model, $key){
+                  if (Yii::$app->user->Identity->role == "Administrador" && $model->fk_user != Yii::$app->user->Identity->email){
+                      return Html::a('<span class = "glyphicon glyphicon-trash" aria-hidden = "true"></span>', $url);
+                  }
+                },
+                'activate' => function ($url, $model, $key){
+                  if (Yii::$app->user->Identity->role == "Administrador" && $model->fk_user != Yii::$app->user->Identity->email && User::findOne(['email' => $model->fk_user])->status == "Inactivo"){
+                      return Html::a('<span class = "glyphicon glyphicon-ok" aria-hidden = "true"></span>', $url);
+                  }
+                },
+                'deactivate' => function ($url, $model, $key){
+                    if(Yii::$app->user->Identity->role == "Administrador" && $model->fk_user != Yii::$app->user->Identity->email && User::findOne(['email' => $model->fk_user])->status == "Activo"){
+                        return Html::a('<span class = "glyphicon glyphicon-remove" aria-hidden = "true"></span>', $url);
+                    }
+                }
+              ]
+            ],
         ],
     ]); ?>
 

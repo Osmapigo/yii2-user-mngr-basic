@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use Yii;
+use common\models\User;
 use common\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
@@ -72,7 +73,21 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if (Yii::$app->user->isGuest){
+            return $this->render('index_guest');
+        }
+        else{
+            if (Yii::$app->user->identity->role == "Administrador"){
+                return $this->render('index_admin');
+            }
+            elseif (Yii::$app->user->identity->role == "Agente"){
+                return $this->render('index_agent');
+            }
+            elseif (Yii::$app->user->identity->role == "Cliente"){
+                return $this->render('index_customer');
+            }
+        }
+
     }
 
     /**
@@ -87,8 +102,14 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post())) {
+            if (User::findOne(['email' => $model->email])->status != "Activo"){
+                return "Usuario inactivo";
+            }
+            if ($model->login()){
+                return $this->goBack();
+            }
+
         } else {
             return $this->render('login', [
                 'model' => $model,

@@ -18,9 +18,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($user, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($user, 'password_hash')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($user, 'password_hash')->passwordInput(['maxlength' => true]) ?>
 
-    <?= $form->field($user, 'role')->radioList(['Administrador' => 'Administrador', 'Agente' => 'Agente', 'Cliente' => 'Cliente']); ?>
+    <? if (Yii::$app->user->identity->role == "Administrador"){
+      echo $form->field($user, 'role')->radioList(['Administrador' => 'Administrador', 'Agente' => 'Agente', 'Cliente' => 'Cliente']); ?>
+    }
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Crear' : 'Actualizar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

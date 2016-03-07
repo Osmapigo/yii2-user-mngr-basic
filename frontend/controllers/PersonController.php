@@ -34,6 +34,9 @@ class PersonController extends Controller
      */
     public function actionIndex()
     {
+      if ((Yii::$app->user->Identity->role == "Cliente")){
+          return "Zona no autorizada para su perfil.";
+      }
         $searchModel = new PersonSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -50,9 +53,14 @@ class PersonController extends Controller
      */
     public function actionView($id)
     {
+      $model = $this->findModel($id);
+      $user = $model->getFkUser($id)->one();
+      if(!(Yii::$app->user->Identity->role == "Administrador" || Yii::$app->user->Identity->role == "Agente") && $model->fk_user != Yii::$app->user->Identity->email){
+        return "Zona no autorizada para su perfil.";
+      }
         return $this->render('view', [
             'user_status'  => User::findBySql("SELECT status FROM user WHERE email = (SELECT fk_user FROM person WHERE person.id = $id)")->one()['status'],
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -63,11 +71,15 @@ class PersonController extends Controller
      */
     public function actionCreate()
     {
+        if(!(Yii::$app->user->Identity->role == "Administrador")){
+            return "Zona no autorizada para su perfil.";
+        }
         $model = new Person();
         $user = new User();
         if ($model->load(Yii::$app->request->post()) && $user->load(Yii::$app->request->post())){
             $new_mail = Yii::$app->request->post()['User']['email'];
             if (Person::findBySql("SELECT * FROM person WHERE fk_user = '$new_mail'")->one() == NULL){
+
                 $user->setAttributes(['status' => "Inactivo", 'registration_date' => date ('Y-m-d h:m:s'), 'password_hash' => $user->setPassword(Yii::$app->request->post()['User']['password_hash'])]);
                 $model->fk_user = $new_mail;
                 if ($user->save() && $model->save()){
@@ -89,29 +101,27 @@ class PersonController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-        $user = $model->getFkUser($id)->one();
+      $model = $this->findModel($id);
+      $user = $model->getFkUser($id)->one();
+      //Check user role and permissions
+      if(!(Yii::$app->user->Identity->role == "Administrador") && $model->fk_user != Yii::$app->user->Identity->email){
+        return "Zona no autorizada para su perfil.";
+      }
         if ($model->load(Yii::$app->request->post()) ) {
-            $new_mail = Yii::$app->request->post()['Person']['fk_user'];
+            $new_mail = Yii::$app->request->post()['User']['email'];
+            $password_hash = Yii::$app->request->post()['User']['password_hash'];
             if (Person::findBySql("SELECT * FROM person WHERE fk_user = '$new_mail' AND id != '$id'")->one() == NULL){
-              $user->email = $new_mail;
+              $password = strpos($password_hash,'$2y$13$') === 0 ? $password_hash : Yii::$app->security->generatePasswordHash($password_hash);
+              $user->setAttributes(['email' => $new_mail, 'password_hash' => $password, 'role' => Yii::$app->request->post()['User']['role']]);
               $user->save();
               $model->save();
               return $this->redirect(['view', 'id' => $model->id]);
             }
             else{
-              return $this->render('update', [
-                  'message' => "Correo electrónico se encuentra en uso",
-                  'model' => $model,
-                  'user' => $user,
-              ]);
+              return $this->render('update', ['message' => "Correo electrónico se encuentra en uso", 'model' => $model, 'user' => $user]);
             }
         } else {
-            return $this->render('update', [
-                'message' => null,
-                'model' => $model,
-                'user' => $user,
-            ]);
+            return $this->render('update', ['message' => null, 'model' => $model, 'user' => $user]);
         }
     }
 
@@ -123,6 +133,9 @@ class PersonController extends Controller
      */
     public function actionDelete($id)
     {
+        if(!(Yii::$app->user->Identity->role == "Administrador")){
+            return "Zona no autorizada para su perfil.";
+        }
         $person = $this->findModel($id);
         $user_logged = Yii::$app->user->identity->email;
         $user = User::findOne(['email' => $person->fk_user]);
