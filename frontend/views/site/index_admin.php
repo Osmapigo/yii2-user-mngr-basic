@@ -24,14 +24,14 @@ $this->title = 'Sistema de gestión de usuarios';
 
                 <p>Administrar los usuarios de la plataforma, datos, cambio de privilegios, activar / desactivar cuenta, </p>
 
-                <p><?= Html::a('Administrar usuarios', ['../person/index'], ['class' => 'btn btn-success']) ?></p>
+                <p><?= Html::a('Administrar usuarios', ['/person/index'], ['class' => 'btn btn-success']) ?></p>
             </div>
             <div class="col-lg-4">
                 <h2>Administrar mi usuario</h2>
 
                 <p>Administrar los datos de mi propio usuario en la plataforma. </p>
 
-                <p><?= Html::a('Mi usuario', ['../person/view?id='. Person::findOne(['fk_user' => Yii::$app->user->identity->email])->id], ['class' => 'btn btn-success']) ?></p>
+                <p><?= Html::a('Mi usuario', ['/person/view?id='. Person::findOne(['fk_user' => Yii::$app->user->identity->email])->id], ['class' => 'btn btn-success']) ?></p>
             </div>
         </div>
 

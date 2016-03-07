@@ -31,7 +31,7 @@ $this->title = 'Sistema de gestión de usuarios';
 
                 <p>Administrar los datos de mi propio usuario en la plataforma. </p>
 
-                <p><?= Html::a('Mi usuario', ['../person/view?id='. Person::findOne(['fk_user' => Yii::$app->user->identity->email])->id], ['class' => 'btn btn-success']) ?></p>
+                <p><?= Html::a('Mi usuario', ['/person/view?id='. Person::findOne(['fk_user' => Yii::$app->user->identity->email])->id], ['class' => 'btn btn-success']) ?></p>
             </div>
         </div>
 
