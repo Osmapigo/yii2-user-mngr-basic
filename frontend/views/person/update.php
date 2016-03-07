@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Person */
 
-$this->title = 'Actualizar Persona: ' . ' ' . $model->name;
+$this->title = 'Actualizar usuario: ' . ' ' . $model->name;
 if (!(Yii::$app->user->Identity->role == "Cliente")){
     $this->params['breadcrumbs'][] = ['label' => 'Usuarios', 'url' => ['index']];
 }
