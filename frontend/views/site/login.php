@@ -15,6 +15,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>Ingresar al sistema de administación:</p>
 
+    <?php if ($message != NULL){
+        echo "<p> <font color='red' size = '6'>$message </font></p>";
+    }
+?>
     <div class="row">
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>

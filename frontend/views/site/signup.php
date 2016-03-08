@@ -6,6 +6,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+USE common\models\User;
 
 $this->title = 'Registro';
 $this->params['breadcrumbs'][] = $this->title;
@@ -27,9 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
 
-                <?= $form->field($model, 'role')->radioList(['Administrador' => 'Administrador', 'Agente' => 'Agente', 'Cliente' => 'Cliente']); ?>
+                <?= $form->field($model, 'role')->radioList([User::ROLE_ADMINISTRATOR => 'Administrador', User::ROLE_AGENT => 'Agente', 'User::ROLE_CUSTOMER' => 'Cliente']) ?>
 
-                <div class="form-group">
+            <div class="form-group">
                     <?= Html::submitButton('Regístrate', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
                 </div>
 

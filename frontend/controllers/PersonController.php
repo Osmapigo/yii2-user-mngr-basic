@@ -188,4 +188,44 @@ class PersonController extends Controller
           'model' => $this->findModel($id),
       ]);
     }
+    
+    /**
+     * Upload excel file
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUploadExcel($id){
+      
+        $inputFile = 1;
+    }
+    
+    public function actionExport(){
+//        $provider = new \yii\data\SqlDataProvider(self::ExcelProvider());
+//        $allModels =  $provider->getModels();
+//        \moonland\phpexcel\Excel::export([
+//            'models' => $allModels,
+//            'columns' => ['column1', 'column2', 'column3'], //without header working, because the header will be get label from attribute label. 
+//        ]);
+        
+        $person = User::findBySql(self::ExcelProvider())->all();
+        var_dump($person);
+        \moonland\phpexcel\Excel::export([
+            'savePath' => "",
+            'format' => 'Excel5',
+            'models' => $person,
+
+            'columns' => ['email'],
+//without header working, because the header will be get label from attribute label.
+//            'headers' => ['Id' => 'IDs','Course' => 'Cuzos', 'Code' => 'Codes'],
+
+        ]);
+    }
+    
+    private function ExcelProvider(){
+        return /*[
+            'sql' => */"SELECT email FROM `user` INNER JOIN person ON user.email = person.fk_user";
+        /*,
+            'pagination' => FALSE,
+        ];*/
+    }
 }

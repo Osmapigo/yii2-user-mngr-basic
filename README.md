@@ -22,6 +22,17 @@ Give properly permissions to project folder.
 
 Run the DML in your MySQL instance.
 
+FACEBOOK TEST USERS
+
+Because of the facebook developer account, we have created three facebook test profiles 
+to test the facebook login.
+
+jnvxbru_bharambesen_1457405996@tfbnw.net
+wotewvu_sharpeman_1457405995@tfbnw.net
+open_onbzuyi_user@tfbnw.net
+
+pass: osmapigo
+
 DIRECTORY STRUCTURE
 -------------------
 
