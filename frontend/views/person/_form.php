@@ -20,10 +20,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($user, 'password_hash')->passwordInput(['maxlength' => true]) ?>
 
-    <?  if (Yii::$app->user->identity->role == "Administrador"){
-          echo $form->field($user, 'role')->radioList(['Administrador' => 'Administrador', 'Agente' => 'Agente', 'Cliente' => 'Cliente']);
-        }
-      ?>
+    <?php
+    if (Yii::$app->user->identity->role == User::ROLE_ADMINISTRATOR) {
+        echo $form->field($user, 'role')->radioList([User::ROLE_ADMINISTRATOR => 'Administrador',User::ROLE_AGENT =>  'Agente', User::ROLE_CUSTOMER => 'Cliente']);
+    }
+    ?>
 
 
     <div class="form-group">

@@ -7,13 +7,13 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'Signup';
+$this->title = 'Registro';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-signup">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to signup:</p>
+    <p>Por favor ingrese los siguentes campos:</p>
 
     <div class="row">
         <div class="col-lg-5">
@@ -35,5 +35,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
+        
+        <div class="col-lg-5" align = "center">
+            O regístrate con tu cuenta de facebook 
+            <?=
+            yii\authclient\widgets\AuthChoice::widget([
+            'baseAuthUrl' => ['site/authSign']
+            ])
+            ?>
+        </div>
+        
+        
+            
+        
     </div>
 </div>

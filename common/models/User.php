@@ -1,26 +1,35 @@
 <?php
+
 namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+
 /**
  * This is the model class for table "user".
  *
  * @property string $email
  * @property string $password_hash
- * @property string $activation_code
- * @property string $forgot_password_code
- * @property string $last_date
- * @property string $role
+ * @property string $registration_date
+ * @property integer $role
+ * @property integer $origin
+ * @property integer $status
  *
  * @property Person[] $people
  */
 class User extends ActiveRecord implements IdentityInterface
 {
 
-  const STATUS_INACTIVE = "Inactivo";
-  const STATUS_ACTIVE = "Activo";
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
+
+    const ORIGIN_WEB_REGISTER = 1;
+    const ORIGIN_FACEBOOK_REGISTER = 0;
+    
+    const ROLE_ADMINISTRATOR = 0;
+    const ROLE_AGENT = 1;
+    const ROLE_CUSTOMER = 2;
 
     /**
      * @inheritdoc
@@ -36,11 +45,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['email', 'role', 'status'], 'required'],
+            [['email', 'password_hash', 'registration_date'], 'required'],
             [['registration_date'], 'safe'],
+            [['role', 'origin', 'status'], 'integer'],
             [['email'], 'string', 'max' => 128],
-            [['password_hash', 'activation_code', 'forgot_password_code'], 'string', 'max' => 64],
-            [['role', 'status'], 'string', 'max' => 45]
+            [['password_hash'], 'string', 'max' => 64]
         ];
     }
 
@@ -50,13 +59,12 @@ class User extends ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'email' => 'Correo electrónico',
-            'password_hash' => 'Contraseña',
-            'activation_code' => 'Activation Code',
-            'forgot_password_code' => 'Forgot Password Code',
-            'registration_date' => 'Fecha de registro',
-            'role' => 'Rol',
-            'status' => 'Estado',
+            'email' => 'Email',
+            'password_hash' => 'Password Hash',
+            'registration_date' => 'Registration Date',
+            'role' => 'Role',
+            'origin' => 'Origin',
+            'status' => 'Status',
         ];
     }
 
@@ -75,7 +83,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function setPassword($password)
     {
-        return $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        return Yii::$app->security->generatePasswordHash($password);
     }
 
     /**

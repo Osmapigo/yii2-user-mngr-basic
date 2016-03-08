@@ -7,7 +7,20 @@ Based on Yii2 Advanced template.
 
 Aditional libraries installed trought Composer:
 
-PhpOffice
+moonlandsoft/yii2-phpexcel => PHPOffice Wrapper to import and export excel files
+yiisoft/yii2-authclient    => Yii2 library to OAuth, OAuth2 authentications. Used in Facebook login
+
+Installation: 
+
+Enable apache rewrite engine:
+    a2enmod rewrite
+
+Clone the repository.
+    git clone https://github.com/Osmapigo/yii2-user-mngr-basic osmapigo
+
+Give properly permissions to project folder.
+
+Run the DML in your MySQL instance.
 
 DIRECTORY STRUCTURE
 -------------------
@@ -23,14 +36,6 @@ console
     migrations/          contains database migrations
     models/              contains console-specific model classes
     runtime/             contains files generated during runtime
-backend
-    assets/              contains application assets such as JavaScript and CSS
-    config/              contains backend configurations
-    controllers/         contains Web controller classes
-    models/              contains backend-specific model classes
-    runtime/             contains files generated during runtime
-    views/               contains view files for the Web application
-    web/                 contains the entry script and Web resources
 frontend
     assets/              contains application assets such as JavaScript and CSS
     config/              contains frontend configurations
@@ -43,5 +48,4 @@ frontend
 vendor/                  contains dependent 3rd-party packages
 environments/            contains environment-based overrides
 tests                    contains various tests for the advanced application
-    codeception/         contains tests developed with Codeception PHP Testing Framework
 ```

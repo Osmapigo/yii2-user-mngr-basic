@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Person */
@@ -17,12 +18,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?
-        if($model->fk_user == \Yii::$app->user->identity->email || \Yii::$app->user->identity->role == "Administrador"){
+        <?php
+        if($model->fk_user == \Yii::$app->user->identity->email || \Yii::$app->user->identity->role == User::ROLE_ADMINISTRATOR){
           echo Html::a('Actualizar', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']);
         }
           ?>
-        <? if ($model->fk_user != \Yii::$app->user->identity->email && \Yii::$app->user->identity->role == "Administrador"){
+        <?php if ($model->fk_user != \Yii::$app->user->identity->email && \Yii::$app->user->identity->role == User::ROLE_ADMINISTRATOR){
           echo Html::a('Eliminar', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -33,10 +34,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
             ?>
-        <? if ($model->fk_user != \Yii::$app->user->identity->email && $user_status == "Activo" && \Yii::$app->user->identity->role == "Administrador"){
+        <?php if ($model->fk_user != \Yii::$app->user->identity->email && $user_status == User::STATUS_ACTIVE && \Yii::$app->user->identity->role == User::ROLE_ADMINISTRATOR){
           echo Html::a('Desactivar', ['deactivate', 'id' => $model->id], ['class' => 'btn btn-primary']);
         }
-        elseif ($model->fk_user != \Yii::$app->user->identity->email && $user_status == "Inactivo" && \Yii::$app->user->identity->role == "Administrador"){
+        elseif ($model->fk_user != \Yii::$app->user->identity->email && $user_status == User::STATUS_INACTIVE && \Yii::$app->user->identity->role == User::ROLE_ADMINISTRATOR){
           echo Html::a('Activar', ['activate', 'id' => $model->id], ['class' => 'btn btn-primary']);
         }  ?>
     </p>

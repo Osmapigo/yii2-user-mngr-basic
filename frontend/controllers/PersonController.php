@@ -34,7 +34,7 @@ class PersonController extends Controller
      */
     public function actionIndex()
     {
-      if ((Yii::$app->user->Identity->role == "Cliente")){
+      if ((Yii::$app->user->Identity->role == User::ROLE_CUSTOMER)){
           return "Zona no autorizada para su perfil.";
       }
         $searchModel = new PersonSearch();
@@ -55,7 +55,7 @@ class PersonController extends Controller
     {
       $model = $this->findModel($id);
       $user = $model->getFkUser($id)->one();
-      if(!(Yii::$app->user->Identity->role == "Administrador" || Yii::$app->user->Identity->role == "Agente") && $model->fk_user != Yii::$app->user->Identity->email){
+      if(!(Yii::$app->user->Identity->role == User::ROLE_ADMINISTRATOR || Yii::$app->user->Identity->role == User::ROLE_AGENT) && $model->fk_user != Yii::$app->user->Identity->email){
         return "Zona no autorizada para su perfil.";
       }
         return $this->render('view', [
@@ -71,7 +71,7 @@ class PersonController extends Controller
      */
     public function actionCreate()
     {
-        if(!(Yii::$app->user->Identity->role == "Administrador")){
+        if(!(Yii::$app->user->Identity->role == User::ROLE_ADMINISTRATOR)){
             return "Zona no autorizada para su perfil.";
         }
         $model = new Person();
@@ -80,11 +80,9 @@ class PersonController extends Controller
             $new_mail = Yii::$app->request->post()['User']['email'];
             if (Person::findBySql("SELECT * FROM person WHERE fk_user = '$new_mail'")->one() == NULL){
 
-                $user->setAttributes(['status' => "Inactivo", 'registration_date' => date ('Y-m-d h:m:s'), 'password_hash' => $user->setPassword(Yii::$app->request->post()['User']['password_hash'])]);
+                $user->setAttributes(['status' => User::STATUS_INACTIVE, 'registration_date' => date ('Y-m-d h:m:s'), 'password_hash' => $user->setPassword(Yii::$app->request->post()['User']['password_hash'])]);
                 $model->fk_user = $new_mail;
-                if ($user->save() && $model->save()){
-                    return $this->redirect(['view', 'id' => $model->id]);
-                  }
+                return ($user->save() && $model->save()) != false ? $this->redirect(['view', 'id' => $model->id]) : null;
             }
         }
         return $this->render('create', [
@@ -104,7 +102,7 @@ class PersonController extends Controller
       $model = $this->findModel($id);
       $user = $model->getFkUser($id)->one();
       //Check user role and permissions
-      if(!(Yii::$app->user->Identity->role == "Administrador") && $model->fk_user != Yii::$app->user->Identity->email){
+      if(!(Yii::$app->user->Identity->role == User::ROLE_ADMINISTRATOR) && $model->fk_user != Yii::$app->user->Identity->email){
         return "Zona no autorizada para su perfil.";
       }
         if ($model->load(Yii::$app->request->post()) ) {
@@ -133,7 +131,7 @@ class PersonController extends Controller
      */
     public function actionDelete($id)
     {
-        if(!(Yii::$app->user->Identity->role == "Administrador")){
+        if(!(Yii::$app->user->Identity->role == User::ROLE_ADMINISTRATOR)){
             return "Zona no autorizada para su perfil.";
         }
         $person = $this->findModel($id);
@@ -168,7 +166,7 @@ class PersonController extends Controller
      */
     public function actionActivate($id){
         $user = User::findBySql("SELECT * FROM user WHERE email = (SELECT fk_user FROM person WHERE person.id = '$id')")->one();
-        $user->status = "Activo";
+        $user->status = User::STATUS_ACTIVE;
         $user->save();
         return $this->render('view', [
             'user_status'  => User::findBySql("SELECT status FROM user WHERE email = (SELECT fk_user FROM person WHERE person.id = $id)")->one()['status'],
@@ -183,7 +181,7 @@ class PersonController extends Controller
      */
     public function actionDeactivate($id){
       $user = User::findBySql("SELECT * FROM user WHERE email = (SELECT fk_user FROM person WHERE person.id = '$id')")->one();
-      $user->status = "Inactivo";
+      $user->status = User::STATUS_INACTIVE;
       $user->save();
       return $this->render('view', [
           'user_status'  => User::findBySql("SELECT status FROM user WHERE email = (SELECT fk_user FROM person WHERE person.id = $id)")->one()['status'],

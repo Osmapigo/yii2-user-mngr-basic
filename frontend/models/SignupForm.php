@@ -16,6 +16,7 @@ class SignupForm extends Model
     public $email;
     public $password;
     public $role;
+    public $origin;
 
     /**
      * @inheritdoc
@@ -27,6 +28,7 @@ class SignupForm extends Model
             ['name', 'required', 'message' => "Necesitamos tu nombre para identificar tus cheques"],
             ['role', 'required', 'message' => "Necesitamos el rol que cumples en el sistema"],
 
+            [['role', 'origin'], 'integer'],
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
@@ -49,6 +51,7 @@ class SignupForm extends Model
             'password' => 'Contraseña',
             'phone_number' => 'Número de teléfono',
             'role' => 'Rol',
+            'origin' => 'Origen'
         ];
     }
 
@@ -57,29 +60,21 @@ class SignupForm extends Model
      *
      * @return User|null the saved model or null if saving fails
      */
-    public function signup()
+    public function signup($origin)
     {
+        $user_exists = User::findOne(['email' => $this->email]);
+        if ($user_exists != NULL){
+            return $user_exists;
+        }
         if (!$this->validate()) {
             return null;
         }
-        $user = new User();
-        $person = new Person();
-
-        $person->name = $this->name;
-        $person->phone_number = $this->phone_number;
-        $person->fk_user = $this->email;
-        $user->email = $this->email;
-        $user->setPassword($this->password);
-        $user->role = $this->role;
-        $user->registration_date = date('Y-m-d h:m:s');
-        $admin_active_users = User::FindOne(['role' => "Administrador" , 'status' => 'Activo']);
-        if ($admin_active_users == NULL && $this->role == "Administrador"){
-          $user->status = "Activo";
-        }
-        else{
-          $user->status = "Inactivo";
-        }
-
+        else {
+        $user = new User(['email' => $this->email, 'password_hash' => Yii::$app->security->generatePasswordHash($this->password), 'registration_date' => date('Y-m-d h:m:s'), 'status' => User::STATUS_INACTIVE, 'origin' => $origin]);
+        $person = new Person(['name' => $this->name, 'phone_number' => $this->phone_number, 'fk_user' => $this->email]);
+        
         return ($user->save() && $person->save()) ? $user : null;
+        }
+        
     }
 }
